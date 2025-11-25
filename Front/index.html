@@ -7,12 +7,12 @@
 </head>
 
 <body>
-<h1>Ai sentiment journal</h1>
+<h1 class="middle">Ai sentiment journal</h1>
 
 <p class="p_middle">Write your thoughts below. The AI will analyze your mood.</p>
 
 <div class="center_div">
-  <textarea class="journal" rows="4" cols="50" id="journalInput" placeholder="Today I was...."></textarea>
+  <textarea class="journal" rows="4" cols="50" id="journalInput" placeholder="What I want to say is ...."></textarea>
 </div>
 
 <div class="button_row">
@@ -27,35 +27,80 @@
           style="margin-left: 110px; width: 90px; background-color: #007bff;">
     Messages
   </button>
-
-  <!-- POP UP BOX -->
   <div id="modalOverlay" class="modal-overlay">
+    <!-- Modal Box -->
     <div class="modal-box">
       <span id="closeModal" class="close-btn">&times;</span>
       <h2>Server Response</h2>
       <p id="modalMessage">Your result will appear here...</p>
     </div>
   </div>
-
 </div>
 
 <script>
+  API_URL = "http://127.0.0.1:8000";
 
   const openBtn = document.getElementById("submit");
+  const msgBtn = document.getElementById("messages");
   const modal = document.getElementById("modalOverlay");
   const closeBtn = document.getElementById("closeModal");
   const messageBox = document.getElementById("modalMessage");
+  const journalInput = document.getElementById("journalInput");
 
+  // OPEN MODAL
   openBtn.onclick = async () => {
-    messageBox.textContent = "Loading...";
+    const text = journalInput.value;
+
+    if (!text) {
+      alert("Please write something first!");
+      return;
+    }
+
+    messageBox.textContent = "Analyzing neural patterns...";
     modal.style.display = "flex";
 
-    setTimeout(() => {
-      const fakeData = { message: "This is a test response ✔" };
-      messageBox.textContent = fakeData.message;
-    }, 1200);
+    try {
+
+        const response = await fetch(`${API_URL}/journal`, {
+          method: "POST",
+          headers: {"Content-Type": "application/json"},
+          body: JSON.stringify({text: text}),
+        });
+
+        if (!response.ok) throw new Error("Backend connection failed.");
+
+        const data = await response.json(); // Expected data: { "mood": "Positive", "score": 0.5 }
+
+        messageBox.innerHTML = `
+        <h3 style="color: #333; margin-bottom: 10px;">Analysis Complete</h3>
+        <p><b>Mood:</b> <span style="color: black">${data.mood}</span></p>
+        <p><b>Confidence:</b> ${data.score}</p>
+        `;
+
+
+    }
+    catch (e) {
+        console.error(e);
+        messageBox.textContent = "Internal Server Error";
+    }
   };
 
+  msgBtn.onclick = async () => {
+    try {
+      const response = await fetch(`${API_URL}/messages`);
+      const data = await response.json();
+
+      console.log("History Loaded:", data);
+      alert("Check the Console (F12) to see your history data!");
+
+      // TODO: Later, we can make another html file to list the messages!
+
+    } catch (error) {
+      alert("Could not fetch messages.");
+    }
+  }
+
+  // --- MODAL CLOSING --
   closeBtn.onclick = () => {
     modal.style.display = "none";
   };

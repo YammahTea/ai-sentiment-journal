@@ -18,7 +18,7 @@ class Base(DeclarativeBase):
 #   # This creates a link so we can say user.posts to get all their entries
 #     posts = relationship("Journal", back_populates="user")
 
-class Journal(Base): # Columns: id, message, sentiment_score, mode, created_at
+class Journal(Base): # Columns: id, message, sentiment_score, mood, created_at
     __tablename__ = "journal"
 
   # Message ID
@@ -27,9 +27,9 @@ class Journal(Base): # Columns: id, message, sentiment_score, mode, created_at
   # Message
     message: Mapped[str] = mapped_column(Text, nullable=False)
 
-  # Analyzed message info (sentiment score and mode)
+  # Analyzed message info (sentiment score and mood)
     sentiment_score: Mapped[float] = mapped_column(Float, nullable=False)
-    mode: Mapped[str] = mapped_column(String, nullable=False)
+    mood: Mapped[str] = mapped_column(String, nullable=False)
 
   # Message time
     created_at: Mapped[datetime] = mapped_column(DateTime, default= lambda : datetime.now(timezone.utc))

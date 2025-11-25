@@ -42,7 +42,7 @@ async def messages(session: AsyncSession = Depends(get_async_session)):
         "id": str(journal.id),
         "message": journal.message,
         "sentiment_Score": journal.sentiment_score,
-        "mode": journal.mode,
+        "mood": journal.mood,
         "created_at": journal.created_at
 
       })
@@ -51,8 +51,8 @@ async def messages(session: AsyncSession = Depends(get_async_session)):
 @app.post("/journal")
 async def analyze_message(entry: JournalEntry, session: AsyncSession = Depends(get_async_session)):
     try:
-      mode, score = await classify_message(entry.text, session)
-      return mode, score
+      mood, score = await classify_message(entry.text, session)
+      return {"mood": mood, "score": score}
     except Exception as e:
       raise HTTPException(status_code=500, detail=str(e))
 
