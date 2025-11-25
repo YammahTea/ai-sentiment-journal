@@ -1,6 +1,8 @@
 from fastapi import FastAPI, HTTPException, Depends
 from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
@@ -24,9 +26,14 @@ app.add_middleware(
     allow_methods=["*"],  # Allows all methods (GET, POST, etc.)
     allow_headers=["*"],  # Allows all headers
 )
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
 class JournalEntry(BaseModel):
     text:str
+
+@app.get("/")
+async def read_root():
+    return FileResponse('static/index.html')
 
 @app.get("/messages")
 async def messages(session: AsyncSession = Depends(get_async_session)):

@@ -1,6 +1,10 @@
-.venv
-.idea
+.venv/
+venv/
 __pycache__/
 *.pyc
+.git/
+.idea/
+.vscode/
 
+# Ignore the local DB (already mounted it as a volume instead)
 journal.db

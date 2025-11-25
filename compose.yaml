@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  backend:
+    build: .
+    image: ai-sentiment-journal:latest
+    container_name: journal-api
+    ports:
+      - "8000:8000"
+
+    develop:
+      watch:
+        - path: ./Back
+          action: rebuild
+        - path: ./static
+          action: rebuild
+    volumes:
+      - ./journal.db:/app/journal.db
+    environment:
+      - WATCHFILES_FORCE_POLLING=true
