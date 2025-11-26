@@ -76,4 +76,4 @@ async def test_database_persistence(client): # check if the message was saved in
 
   journals = data["Journals"]
   assert len(journals) > 0
-  assert journals[-1]["message"] == "Database Test Message"
+  assert journals[-1]["message"] == "Test message in the database"
